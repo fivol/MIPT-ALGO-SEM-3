@@ -7,13 +7,12 @@
 #include <iostream>
 #include "./solution.cpp"
 
-using namespace std;
 
 int main() {
-    string text;
-    cin >> text;
+    std::string text;
+    std::cin >> text;
 
-    cout << palindromeSubstringsAmount(text);
+    std::cout << palindromeSubstringsAmount(text);
 
     return 0;
 }

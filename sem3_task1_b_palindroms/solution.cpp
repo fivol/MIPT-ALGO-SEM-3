@@ -1,43 +1,41 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 
-typedef long long ll;
+int64_t palindromeSubstringsAmount(const std::string &text) {
+    size_t leftBorderOdd = 0, rightBorderOdd = 0;
+    size_t leftBorderEven = 0, rightBorderEven = 0;
+    std::vector<size_t> palindromeSizeOdd(text.size(), 0);
+    std::vector<size_t> palindromeSizeEven(text.size(), 0);
+    for (size_t i = 0; i < text.size(); ++i) {
+        if (i < rightBorderOdd)
+            palindromeSizeOdd[i] = std::min(rightBorderOdd - i, palindromeSizeOdd[leftBorderOdd + rightBorderOdd - i]);
+        if (i < rightBorderEven)
+            palindromeSizeEven[i] = std::min(rightBorderEven - i, palindromeSizeEven[leftBorderEven + rightBorderEven - i]);
 
-
-ll palindromeSubstringsAmount(const string &text) {
-    int leftBorder = 0, rightBorder = -1;
-    vector<int> palindromeSize1(text.size(), 0);
-    for (int i = 0; i < text.size(); ++i) {
-        if (i < rightBorder)
-            palindromeSize1[i] = min(rightBorder - i, palindromeSize1[leftBorder + rightBorder - i]);
-        while (i + palindromeSize1[i] < text.size() && i - palindromeSize1[i] >= 0 &&
-               text[i + palindromeSize1[i]] == text[i - palindromeSize1[i]])
-            ++palindromeSize1[i];
-        if (i + palindromeSize1[i] > rightBorder) {
-            rightBorder = i + palindromeSize1[i];
-            leftBorder = i - palindromeSize1[i];
+        while (i + palindromeSizeOdd[i] < text.size() && i - palindromeSizeOdd[i] >= 0 &&
+               text[i + palindromeSizeOdd[i]] == text[i - palindromeSizeOdd[i]])
+            ++palindromeSizeOdd[i];
+        while (i + palindromeSizeEven[i] < text.size() && i - palindromeSizeEven[i] - 1 >= 0 &&
+               text[i + palindromeSizeEven[i]] == text[i - palindromeSizeEven[i] - 1])
+            ++palindromeSizeEven[i];
+        
+        if (i + palindromeSizeOdd[i] > rightBorderOdd) {
+            rightBorderOdd = i + palindromeSizeOdd[i];
+            leftBorderOdd = i - palindromeSizeOdd[i];
         }
-    }
-    leftBorder = 0, rightBorder = - 1;
-    vector<int> palindromeSize2(text.size(), 0);
-    for (int i = 1; i < text.size(); ++i) {
-        if (i < rightBorder)
-            palindromeSize2[i] = min(rightBorder - i, palindromeSize2[leftBorder + rightBorder - i]);
-        while (i + palindromeSize2[i] < text.size() && i - palindromeSize2[i] - 1 >= 0 &&
-               text[i + palindromeSize2[i]] == text[i - palindromeSize2[i] - 1])
-            ++palindromeSize2[i];
-        if (i + palindromeSize2[i] > rightBorder) {
-            rightBorder = i + palindromeSize2[i];
-            leftBorder = i - palindromeSize2[i];
+
+        if (i + palindromeSizeEven[i] > rightBorderEven) {
+            rightBorderEven = i + palindromeSizeEven[i];
+            leftBorderEven = i - palindromeSizeEven[i];
         }
     }
 
-    ll amount = 0;
-    for (ll count: palindromeSize1)
+    int64_t amount = 0;
+    for (auto count: palindromeSizeOdd)
         amount += count - 1;
-    for (ll count: palindromeSize2)
+    
+    for (auto count: palindromeSizeEven)
         amount += count;
 
     return amount;
