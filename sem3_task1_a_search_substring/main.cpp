@@ -11,14 +11,14 @@
 #include "./solution.cpp"
 
 int main() {
-    string pattern, text;
-    cin >> pattern >> text;
+    std::string pattern, text;
+    std::cin >> pattern >> text;
 
-    vector<int> patternPositions;
+    std::vector<size_t> patternPositions;
     findPatternPositions(patternPositions, text, pattern);
 
-    for (auto pos: patternPositions) {
-        cout << pos << ' ';
+    for (size_t pos: patternPositions) {
+        std::cout << pos << ' ';
     }
     return 0;
 }

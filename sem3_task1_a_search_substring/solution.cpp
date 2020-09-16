@@ -1,14 +1,12 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
-void calcStringZFunction(vector<int> &zFuncValues, const string &text) {
+void calcStringZFunction(std::vector<size_t> &zFuncValues, const std::string &text) {
     zFuncValues.resize(text.size());
     zFuncValues[0] = 0;
-    int lBorder = 0;
-    int rBorder = 0;
-    for (int i = 1; i < zFuncValues.size(); ++i) {
+    size_t lBorder = 0;
+    size_t rBorder = 0;
+    for (size_t i = 1; i < zFuncValues.size(); ++i) {
         if (i < rBorder && zFuncValues[i - lBorder] + i < rBorder) {
             zFuncValues[i] = zFuncValues[i - lBorder];
         } else {
@@ -22,11 +20,11 @@ void calcStringZFunction(vector<int> &zFuncValues, const string &text) {
     }
 }
 
-void findPatternPositions(vector<int> &patternPositions, const string &text, const string &pattern) {
-    vector<int> zFuncValues;
-    string searchPattern = pattern + '@' + text;
+void findPatternPositions(std::vector<size_t> &patternPositions, const std::string &text, const std::string &pattern) {
+    std::vector<size_t> zFuncValues;
+    std::string searchPattern = pattern + '@' + text;
     calcStringZFunction(zFuncValues, searchPattern);
-    for (int i = pattern.size(); i < zFuncValues.size(); ++i) {
+    for (size_t i = pattern.size(); i < zFuncValues.size(); ++i) {
         if (zFuncValues[i] == pattern.size())
             patternPositions.push_back(i - pattern.size() - 1);
     }
