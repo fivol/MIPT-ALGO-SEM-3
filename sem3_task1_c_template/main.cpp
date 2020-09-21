@@ -1,12 +1,11 @@
 #include <iostream>
-#include "./StringTemplate.cpp"
+#include "StringTemplate.h"
 
 int main() {
     std::string templateString, text;
     std::cin >> templateString >> text;
 
-    StringTemplate parser;
-    parser.compileTemplate(templateString);
+    StringTemplate parser(templateString);
 
     parser.parseText(text);
 

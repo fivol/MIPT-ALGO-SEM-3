@@ -3,4 +3,4 @@ project(sem3_task1_c_template)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(sem3_task1_c_template main.cpp)
+add_executable(sem3_task1_c_template main.cpp StringTemplate.cpp)
