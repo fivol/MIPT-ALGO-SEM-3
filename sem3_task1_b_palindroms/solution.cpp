@@ -10,11 +10,9 @@ int64_t palindromeSubstringsAmount(const std::string &text) {
     for (size_t i = 0; i < text.size(); ++i) {
         if (i < rightBorderOdd){
             palindromeSizeOdd[i] = std::min(rightBorderOdd - i, palindromeSizeOdd[leftBorderOdd + rightBorderOdd - i]);
-
         }
         if (i < rightBorderEven){
             palindromeSizeEven[i] = std::min(rightBorderEven - i, palindromeSizeEven[leftBorderEven + rightBorderEven - i]);
-
         }
         while (i + palindromeSizeOdd[i] < text.size() && i - palindromeSizeOdd[i] >= 0 &&
                text[i + palindromeSizeOdd[i]] == text[i - palindromeSizeOdd[i]]){
