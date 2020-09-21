@@ -14,8 +14,7 @@ int main() {
     std::string pattern, text;
     std::cin >> pattern >> text;
 
-    std::vector<size_t> patternPositions;
-    findPatternPositions(patternPositions, text, pattern);
+    std::vector<size_t> patternPositions = findPatternPositions(text, pattern);
 
     for (size_t pos: patternPositions) {
         std::cout << pos << ' ';
