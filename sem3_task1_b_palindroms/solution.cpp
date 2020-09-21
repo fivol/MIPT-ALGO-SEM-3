@@ -8,18 +8,19 @@ int64_t palindromeSubstringsAmount(const std::string &text) {
     std::vector<size_t> palindromeSizeOdd(text.size());
     std::vector<size_t> palindromeSizeEven(text.size());
     for (size_t i = 0; i < text.size(); ++i) {
-        if (i < rightBorderOdd){
+        if (i < rightBorderOdd) {
             palindromeSizeOdd[i] = std::min(rightBorderOdd - i, palindromeSizeOdd[leftBorderOdd + rightBorderOdd - i]);
         }
-        if (i < rightBorderEven){
-            palindromeSizeEven[i] = std::min(rightBorderEven - i, palindromeSizeEven[leftBorderEven + rightBorderEven - i]);
+        if (i < rightBorderEven) {
+            palindromeSizeEven[i] = std::min(rightBorderEven - i,
+                                             palindromeSizeEven[leftBorderEven + rightBorderEven - i]);
         }
         while (i + palindromeSizeOdd[i] < text.size() && i - palindromeSizeOdd[i] >= 0 &&
-               text[i + palindromeSizeOdd[i]] == text[i - palindromeSizeOdd[i]]){
+               text[i + palindromeSizeOdd[i]] == text[i - palindromeSizeOdd[i]]) {
             ++palindromeSizeOdd[i];
         }
         while (i + palindromeSizeEven[i] < text.size() && i - palindromeSizeEven[i] - 1 >= 0 &&
-               text[i + palindromeSizeEven[i]] == text[i - palindromeSizeEven[i] - 1]){
+               text[i + palindromeSizeEven[i]] == text[i - palindromeSizeEven[i] - 1]) {
             ++palindromeSizeEven[i];
         }
 
@@ -35,11 +36,11 @@ int64_t palindromeSubstringsAmount(const std::string &text) {
     }
 
     int64_t amount = 0;
-    for (auto count: palindromeSizeOdd){
+    for (auto count: palindromeSizeOdd) {
         amount += count - 1;
     }
 
-    for (auto count: palindromeSizeEven){
+    for (auto count: palindromeSizeEven) {
         amount += count;
     }
 
