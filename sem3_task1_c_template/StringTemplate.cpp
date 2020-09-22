@@ -7,9 +7,8 @@
 #include "StringTemplate.h"
 
 
-
 void StringTemplate::buildTree() {
-    root = std::make_shared<Node>('@');
+    root = std::make_shared<Node>();
     root->parent = root;
     root->suffixLink = root;
 
