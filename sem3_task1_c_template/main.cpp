@@ -7,7 +7,11 @@ int main() {
 
     StringTemplate parser(templateString);
 
-    parser.parseText(text);
+    auto templateMatches = parser.parseText(text);
+
+    for (auto match: templateMatches) {
+        std::cout << match << ' ';
+    }
 
     return 0;
 }

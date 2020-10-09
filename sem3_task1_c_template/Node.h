@@ -8,7 +8,9 @@
 struct Node {
     Node(char symbol, std::shared_ptr<Node> &parent) : symbol(symbol), parent(parent) {};
 
-    explicit Node(char symbol = '@') : symbol(symbol) {};
+    Node(std::shared_ptr<Node> &parent, std::shared_ptr<Node> &suffixLink) : parent(parent),
+                                                                            suffixLink(suffixLink) {};
+
     std::weak_ptr<Node> parent;
     std::map<char, std::shared_ptr<Node>> children;
     std::weak_ptr<Node> suffixLink;

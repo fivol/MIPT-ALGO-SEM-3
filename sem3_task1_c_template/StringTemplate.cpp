@@ -8,9 +8,7 @@
 
 
 void StringTemplate::buildTree() {
-    root = std::make_shared<Node>();
-    root->parent = root;
-    root->suffixLink = root;
+    root = std::make_shared<Node>(root, root);
 
     for (size_t i = 0; i < templates.size(); ++i) {
         auto currNode = root;
@@ -38,7 +36,7 @@ std::shared_ptr<Node> StringTemplate::mainTransition(const std::shared_ptr<Node>
 }
 
 std::weak_ptr<Node> StringTemplate::suffixLinkNode(const std::shared_ptr<Node> &node) {
-    if (!node->suffixLink.lock()) {
+    if (node->suffixLink.expired()) {
         if (node->parent.lock() == root) {
             node->suffixLink = root;
 
@@ -52,7 +50,7 @@ std::weak_ptr<Node> StringTemplate::suffixLinkNode(const std::shared_ptr<Node> &
 
 
 std::weak_ptr<Node> StringTemplate::shortLinkNode(const std::shared_ptr<Node> &node) {
-    if (!node->shortLink.lock()) {
+    if (node->shortLink.expired()) {
         auto suffix = suffixLinkNode(node);
         if (suffix.lock()->terminated || suffix.lock() == root) {
             node->shortLink = suffix;
@@ -86,7 +84,7 @@ void StringTemplate::splitTemplateByQuestions(const std::string &tempString) {
     }
 }
 
-void StringTemplate::parseText(const std::string &text) {
+std::vector<size_t> StringTemplate::parseText(const std::string &text) {
     auto currNode = root;
     std::vector<size_t> tempBeginPosition(text.size(), 0);
     for (size_t i = 0; i < text.size(); ++i) {
@@ -104,11 +102,13 @@ void StringTemplate::parseText(const std::string &text) {
             suffixNode = shortLinkNode(suffixNode).lock();
         }
     }
+    std::vector<size_t> templateMatches;
     for (size_t i = 0; templateSize + i <= tempBeginPosition.size(); ++i) {
         if (tempBeginPosition[i] >= templatesCount) {
-            std::cout << i << ' ';
+            templateMatches.emplace_back(i);
         }
     }
+    return templateMatches;
 }
 
 StringTemplate::StringTemplate(const std::string &tempString) {

@@ -11,7 +11,7 @@ class StringTemplate {
 public:
     explicit StringTemplate(const std::string &tempString);
 
-    void parseText(const std::string &text);
+    std::vector<size_t> parseText(const std::string &text);
 
 private:
     std::shared_ptr<Node> root;
