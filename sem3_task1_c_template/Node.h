@@ -16,6 +16,6 @@ struct Node {
     std::weak_ptr<Node> suffixLink;
     std::weak_ptr<Node> shortLink;
     size_t patternIndex = 0;
-    bool terminated = false;
+    bool finite = false;
     char symbol;
 };

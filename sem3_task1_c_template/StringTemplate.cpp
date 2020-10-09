@@ -1,4 +1,3 @@
-#include <iostream>
 #include <memory>
 #include <map>
 #include <string>
@@ -20,7 +19,7 @@ void StringTemplate::buildTree() {
             currNode = currNode->children[sym];
         }
         currNode->patternIndex = i;
-        currNode->terminated = true;
+        currNode->finite = true;
     }
 }
 
@@ -52,7 +51,7 @@ std::weak_ptr<Node> StringTemplate::suffixLinkNode(const std::shared_ptr<Node> &
 std::weak_ptr<Node> StringTemplate::shortLinkNode(const std::shared_ptr<Node> &node) {
     if (node->shortLink.expired()) {
         auto suffix = suffixLinkNode(node);
-        if (suffix.lock()->terminated || suffix.lock() == root) {
+        if (suffix.lock()->finite || suffix.lock() == root) {
             node->shortLink = suffix;
         } else {
             node->shortLink = shortLinkNode(suffix.lock());
@@ -62,16 +61,16 @@ std::weak_ptr<Node> StringTemplate::shortLinkNode(const std::shared_ptr<Node> &n
 }
 
 
-void StringTemplate::splitTemplateByQuestions(const std::string &tempString) {
+void StringTemplate::splitTemplateByQuestions(const std::string &tempString, char separator) {
     std::string accString;
     templatesCount = 0;
     templateSize = tempString.size();
     for (size_t i = 0; i < tempString.size(); ++i) {
         char sym = tempString[i];
-        if (sym != '?') {
+        if (sym != separator) {
             accString += sym;
         }
-        if (!accString.empty() && sym == '?') {
+        if (!accString.empty() && sym == separator) {
             templates.emplace_back(accString);
             tempPositions[accString].emplace_back(i);
             ++templatesCount;
@@ -86,13 +85,13 @@ void StringTemplate::splitTemplateByQuestions(const std::string &tempString) {
 
 std::vector<size_t> StringTemplate::parseText(const std::string &text) {
     auto currNode = root;
-    std::vector<size_t> tempBeginPosition(text.size(), 0);
+    std::vector<size_t> tempBeginPosition(text.size());
     for (size_t i = 0; i < text.size(); ++i) {
         char sym = text[i];
         currNode = mainTransition(currNode, sym);
         auto suffixNode = currNode;
         while (suffixNode != root) {
-            if (suffixNode->terminated) {
+            if (suffixNode->finite) {
                 for (const auto match: tempPositions[templates[suffixNode->patternIndex]]) {
                     if (i + 1 >= match) {
                         ++tempBeginPosition[i + 1 - match];

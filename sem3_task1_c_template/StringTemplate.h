@@ -21,7 +21,7 @@ private:
     size_t templatesCount = 0;
     size_t templateSize = 0;
 
-    void splitTemplateByQuestions(const std::string &tempString);
+    void splitTemplateByQuestions(const std::string &tempString, char separator = '?');
 
     void buildTree();
 
