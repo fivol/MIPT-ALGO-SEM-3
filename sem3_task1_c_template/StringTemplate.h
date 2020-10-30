@@ -4,7 +4,6 @@
 #include <memory>
 #include <map>
 #include <vector>
-#include "Node.h"
 
 
 class StringTemplate {
@@ -14,6 +13,22 @@ public:
     std::vector<size_t> parseText(const std::string &text);
 
 private:
+
+    struct Node {
+        Node(char symbol, std::shared_ptr<Node> &parent) : symbol(symbol), parent(parent) {};
+
+        Node(std::shared_ptr<Node> &parent, std::shared_ptr<Node> &suffixLink) : parent(parent),
+                                                                                 suffixLink(suffixLink) {};
+
+        std::weak_ptr<Node> parent;
+        std::map<char, std::shared_ptr<Node>> children;
+        std::weak_ptr<Node> suffixLink;
+        std::weak_ptr<Node> shortLink;
+        size_t patternIndex = 0;
+        bool finite = false;
+        char symbol{};
+    };
+
     std::shared_ptr<Node> root;
 
     std::map<std::string, std::vector<size_t>> tempPositions;

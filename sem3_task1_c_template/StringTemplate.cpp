@@ -2,18 +2,17 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "Node.h"
 #include "StringTemplate.h"
 
 
 void StringTemplate::buildTree() {
-    root = std::make_shared<Node>(root, root);
+    root = std::make_shared<StringTemplate::Node>(root, root);
 
     for (size_t i = 0; i < templates.size(); ++i) {
         auto currNode = root;
         for (const auto sym : templates[i]) {
             if (currNode->children.find(sym) == currNode->children.end()) {
-                auto node = std::make_shared<Node>(sym, currNode);
+                auto node = std::make_shared<StringTemplate::Node>(sym, currNode);
                 currNode->children[sym] = node;
             }
             currNode = currNode->children[sym];
@@ -23,7 +22,7 @@ void StringTemplate::buildTree() {
     }
 }
 
-std::shared_ptr<Node> StringTemplate::mainTransition(const std::shared_ptr<Node> &node, char c) {
+std::shared_ptr<StringTemplate::Node> StringTemplate::mainTransition(const std::shared_ptr<StringTemplate::Node> &node, char c) {
     if (node->children.find(c) != node->children.end()) {
         return node->children[c];
     }
@@ -34,7 +33,7 @@ std::shared_ptr<Node> StringTemplate::mainTransition(const std::shared_ptr<Node>
     return mainTransition(suffixLinkNode(node).lock(), c);
 }
 
-std::weak_ptr<Node> StringTemplate::suffixLinkNode(const std::shared_ptr<Node> &node) {
+std::weak_ptr<StringTemplate::Node> StringTemplate::suffixLinkNode(const std::shared_ptr<StringTemplate::Node> &node) {
     if (node->suffixLink.expired()) {
         if (node->parent.lock() == root) {
             node->suffixLink = root;
@@ -48,7 +47,7 @@ std::weak_ptr<Node> StringTemplate::suffixLinkNode(const std::shared_ptr<Node> &
 }
 
 
-std::weak_ptr<Node> StringTemplate::shortLinkNode(const std::shared_ptr<Node> &node) {
+std::weak_ptr<StringTemplate::Node> StringTemplate::shortLinkNode(const std::shared_ptr<StringTemplate::Node> &node) {
     if (node->shortLink.expired()) {
         auto suffix = suffixLinkNode(node);
         if (suffix.lock()->finite || suffix.lock() == root) {
