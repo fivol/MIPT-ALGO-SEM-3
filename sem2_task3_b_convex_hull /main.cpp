@@ -77,25 +77,27 @@ public:
         Point left = points[0];
         Point right = points.back();
         std::vector<Point> top, bottom;
-        top.push_back(left);
-        bottom.push_back(left);
+        top.emplace_back(left);
+        bottom.emplace_back(left);
 
         for (size_t i = 1; i < points.size(); ++i) {
             if (i == points.size() - 1 || Point::IsLeftAngle(left, right, points[i])) {
                 while (top.size() >= 2 && !Point::IsRightAngle(top[top.size() - 2], top.back(), points[i])) {
                     top.pop_back();
                 }
-                top.push_back(points[i]);
+                top.emplace_back(points[i]);
             }
             if (i == points.size() - 1 || Point::IsRightAngle(left, right, points[i])) {
                 while (bottom.size() >= 2 && !Point::IsLeftAngle(bottom[bottom.size() - 2], bottom.back(), points[i])) {
                     bottom.pop_back();
                 }
-                bottom.push_back(points[i]);
+                bottom.emplace_back(points[i]);
             }
         }
 
-        convex_hull.insert(convex_hull.begin(), top.begin(), top.end());
+        convex_hull.insert(convex_hull.begin(),
+                           std::make_move_iterator(top.begin()),
+                           std::make_move_iterator(top.end()));
         for (size_t i = bottom.size() - 2; i > 0; --i) {
             convex_hull.emplace_back(bottom[i]);
         }
