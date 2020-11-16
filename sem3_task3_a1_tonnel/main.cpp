@@ -25,6 +25,8 @@ public:
 
     Vector() = default;
 
+    ~Vector() = default;
+
     Vector(const Vector &other) = default;
 
     Vector(Vector &&other) = default;
@@ -45,7 +47,7 @@ public:
     }
 
     void Normalize() {
-        Div(GetLength());
+        *this /= GetLength();
     }
 
     [[nodiscard]] Vector Normalized() const {
@@ -54,41 +56,42 @@ public:
         return result;
     }
 
-    void Invert() {
-        Mul(-1);
+    Vector operator-() const {
+        return (Vector() - *this);
     }
 
-    void Mul(double value) {
+    Vector &operator*=(double value) {
         x *= value;
         y *= value;
         z *= value;
+        return *this;
     }
 
-    void Div(double value) {
-        Mul(1 / value);
+    Vector &operator/=(double value) {
+        return *this *= 1 / value;
     }
 
-    void Add(const Vector &other) {
+    Vector &operator+=(const Vector &other) {
         x += other.x;
         y += other.y;
         z += other.z;
+        return *this;
     }
 
-    void Sub(const Vector &other) {
-        Invert();
-        Add(other);
-        Invert();
+    Vector &operator-=(const Vector &other) {
+        *this += -other;
+        return *this;
     }
 
     Vector operator+(const Vector &other) const {
         Vector result = *this;
-        result.Add(other);
+        result += other;
         return result;
     }
 
     Vector operator-(const Vector &other) const {
         Vector result = *this;
-        result.Sub(other);
+        result -= other;
         return result;
     }
 
@@ -181,13 +184,13 @@ public:
 
         double volume = Vector::CountVolume(line, other_line, other.p1 - p1);
         double square = Vector::CountSquare(line, other_line);
-        if(square == 0){
+        if (square == 0) {
             return normal;
         }
         double height = volume / square;
         normal = line * other_line;
         normal.Normalize();
-        normal.Mul(height);
+        normal *= height;
         return normal;
     }
 
@@ -197,8 +200,8 @@ public:
 
         Vector normal = GetNormalBetweenLines(other);
         Segment other_moved = other;
-        other_moved.p1.Sub(normal);
-        other_moved.p2.Sub(normal);
+        other_moved.p1 -= normal;
+        other_moved.p2 -= normal;
 
         // Now both Segments: this and other_moved lies in the same plane
 
