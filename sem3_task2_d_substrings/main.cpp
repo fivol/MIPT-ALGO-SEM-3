@@ -87,7 +87,8 @@ public:
             lsp = newLsp;
             classes = newClasses;
         }
-        _suffixArray.insert(_suffixArray.begin(), substrOrderedIndex.begin() + 1, substrOrderedIndex.end());
+        _suffixArray.insert(_suffixArray.begin(), std::make_move_iterator(substrOrderedIndex.begin() + 1),
+                            std::make_move_iterator(substrOrderedIndex.end()));
         _lsp = lsp;
     };
 
@@ -98,6 +99,14 @@ public:
     [[nodiscard]] const std::vector<int> &getLSP() const {
         return _lsp;
     }
+
+    [[nodiscard]] int countUniqueSubstrings() const {
+        int substrings_count = 0;
+        for (int i = 0; i < _lsp.size() - 1; ++i) {
+            substrings_count += i + 1 - _lsp[i];
+        }
+        return substrings_count;
+    }
 };
 
 int main() {
@@ -105,15 +114,8 @@ int main() {
     std::cin >> s;
 
     SuffixArray array(s);
-    int answer = 0;
 
-    auto lsp = array.getLSP();
-
-    for (int i = 0; i < lsp.size() - 1; ++i) {
-        answer += i + 1 - lsp[i];
-    }
-
-    std::cout << answer;
+    std::cout << array.countUniqueSubstrings();
 
     return 0;
 }
