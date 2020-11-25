@@ -3,4 +3,4 @@ project(sem3_task2_d2_minkowski_sum)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(sem3_task2_d2_minkowski_sum main.cpp)
+add_executable(sem3_task2_d2_minkowski_sum vector_int2d.h point_int2d.h main.cpp convex_polygon.h)
