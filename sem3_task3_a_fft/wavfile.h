@@ -59,7 +59,7 @@ private:
         }
     }
 
-    void fft(std::vector<complex_t> &array, bool invert);
+    void fft(std::vector<complex_t> &array, bool is_invert);
 
     static uint64_t GetNBytes(void *ptr, int n) {
         uint64_t value = 0;
@@ -86,25 +86,29 @@ bool WAVFile::ReadFile(const char *filename) {
     return true;
 }
 
-void WAVFile::fft(std::vector<complex_t> &array, bool invert) {
-    int n = (int) array.size();
-    if (n == 1) return;
+void WAVFile::fft(std::vector<complex_t> &array, bool is_invert) {
+    int size = (int) array.size();
+    if (size == 1){
+        return;
+    };
 
-    std::vector<complex_t> oven(n / 2), odd(n / 2);
-    for (int i = 0, j = 0; i < n; i += 2, ++j) {
+    std::vector<complex_t> oven(size / 2), odd(size / 2);
+    for (int i = 0, j = 0; i < size; i += 2, ++j) {
         oven[j] = array[i];
         odd[j] = array[i + 1];
     }
-    fft(oven, invert);
-    fft(odd, invert);
+    fft(oven, is_invert);
+    fft(odd, is_invert);
 
-    double ang = 2 * M_PI / n * (invert ? -1 : 1);
-    complex_t w(1), wn(cos(ang), sin(ang));
-    for (int i = 0; i < n / 2; ++i) {
+    double angle = 2 * M_PI / size * (is_invert ? -1 : 1);
+    complex_t w(1);
+    complex_t wn(cos(angle), sin(angle));
+    for (int i = 0; i < size / 2; ++i) {
         array[i] = oven[i] + w * odd[i];
-        array[i + n / 2] = oven[i] - w * odd[i];
-        if (invert)
-            array[i] /= 2, array[i + n / 2] /= 2;
+        array[i + size / 2] = oven[i] - w * odd[i];
+        if (is_invert){
+            array[i] /= 2, array[i + size / 2] /= 2;
+        }
         w *= wn;
     }
 }
