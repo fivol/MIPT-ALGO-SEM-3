@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include "wav_header.h"
+#include "constants.h"
 
 typedef std::complex<double> complex_t;
 
@@ -40,7 +41,7 @@ public:
         return true;
     }
 
-    void MakeFFTCompression(double compression_ratio, int page_size);
+    void MakeFFTCompression(double compression_ratio, const std::string& compress_type, int page_size);
 
     [[nodiscard]] WAVHEADER GetHeader() const {
         return header;
@@ -113,7 +114,7 @@ void WAVFile::fft(std::vector<complex_t> &array, bool is_invert) {
     }
 }
 
-void WAVFile::MakeFFTCompression(double compression_ratio, int page_size) {
+void WAVFile::MakeFFTCompression(double compression_ratio, const std::string& compress_type, int page_size) {
     std::vector<complex_t> sequence_page(page_size);
     int pointer = 0;
     int data_size = GetDataLength();
@@ -122,7 +123,14 @@ void WAVFile::MakeFFTCompression(double compression_ratio, int page_size) {
         int count = std::min(page_size, (data_size - pointer) / header.blockAlign);
         CopyToVector(data + pointer, sequence_page, header.blockAlign, count);
         fft(sequence_page, false);
-        memset(&sequence_page[page_size - compression_ratio * page_size], 0, compression_ratio * page_size);
+        size_t compression_begin_pointer = 0;
+        size_t compression_size = compression_ratio * page_size;
+        if(COMPRESS_MIDDLE == compress_type){
+            compression_begin_pointer = (page_size - compression_size) / 2;
+        }else{
+            compression_begin_pointer = page_size - compression_size;
+        }
+        memset(&sequence_page[compression_begin_pointer], 0, compression_size);
         fft(sequence_page, true);
         CopyFromVector(data + pointer, sequence_page, header.blockAlign, count);
 

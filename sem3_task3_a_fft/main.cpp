@@ -18,11 +18,21 @@ int main(int argc, char **args) {
     }
     double compression_ratio = 0.3;
     int page_size = 128;
-    if(argc > 3){
+    std::string compression_type;
+    if (argc > 3) {
         compression_ratio = std::stod(args[3]);
     }
-    if(argc > 4){
-        page_size = std::stoi(args[4]);
+    if (argc > 4) {
+        compression_type = args[4];
+        if (compression_type != COMPRESS_BEGIN &&
+            compression_type != COMPRESS_MIDDLE &&
+            compression_type != COMPRESS_END) {
+            std::cout << "Incorrect compression type. Please specify 'begin' or 'middle' or 'end'";
+            return 1;
+        }
+    }
+    if (argc > 5) {
+        page_size = std::stoi(args[5]);
     }
 
     std::cout << "Input file: " << args[1] << '\n';
@@ -38,7 +48,7 @@ int main(int argc, char **args) {
     PRINT(header.bitsPerSample);
     PRINT(header.subchunk2Size);
 
-    file.MakeFFTCompression(compression_ratio, page_size);
+    file.MakeFFTCompression(compression_ratio, compression_type, page_size);
 
     if (!file.SaveFile(args[2])) {
         std::cout << "Can not save file" << '\n';
